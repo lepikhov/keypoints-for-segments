@@ -31,6 +31,8 @@ from PIL import Image
 import cv2
 import random
 import imageio
+from segmentation import prepare_segments
+import utils
 
 
 
@@ -111,12 +113,16 @@ def tps_list():
             imagefile = os.path.basename(relpath)
             path = os.path.join(dir,relpath[1:len(relpath)-len(imagefile)-1])
 
+            if num != 72:
+                print(file_name[79:],'| img:', imagefile, '| num points:', num)            
+
             df = df.append({'id': uuid.uuid4().hex, 
                             'landmarks': ps, 
                             'imagedir':path, 
                             'imagefile': imagefile}, 
                             ignore_index=True)    
             i += 1
+        print(file_name[79:], " items:", i)            
 
     print('total number:\n', df.count())
     print('number of landmarks:\n', len(df['landmarks'][0]))
@@ -158,17 +164,7 @@ def get_horse(sdf, id):
 def get_horse_keypoints(sdf, id): 
 
   return sdf.iloc[id]['landmarks']
-
-def draw_keypoints(keypoints, image):
-
-    h, _, _ = image.shape
-    for i in range(0,len(keypoints)):
-        image = cv2.circle(image, 
-                            center=(int(keypoints[i][0]), int(h-keypoints[i][1])), 
-                            radius=h//200, 
-                            color=(0, 0, 255), thickness=-1)
-        
-    return image        
+       
 
 def draw_image_with_keypoints(df, id):
     try:
@@ -176,7 +172,7 @@ def draw_image_with_keypoints(df, id):
     except Exception as e:
         print(str(e),  id, os.path.join(df.iloc[id]['imagedir'],df.iloc[id]['imagefile']))       
     else:
-        image = draw_keypoints(list(df['landmarks'][id]), image)
+        image = utils.draw_keypoints(list(df['landmarks'][id]), image)
         save_name = f"{df.iloc[id]['imagefile'].split('.')[0]}_out"
         cv2.imwrite(f"outputs/{save_name}.jpg", image)
 
@@ -186,15 +182,71 @@ if __name__ == "__main__":
     #print(tps_df.head(31))
     #print(tps_df.iloc(0)[0])
     
-    random_idxs = []
-    random.seed(42)
-    for i in range(5):
-        n = random.randint(1,len(tps_df))
-        random_idxs.append(n)
-    print(random_idxs)
+    #random_idxs = []
+    #random.seed(42)
+    #for i in range(5):
+    #    n = random.randint(1,len(tps_df))
+    #    random_idxs.append(n)
+    #print(random_idxs)    
     #for idx in random_idxs:
+    #    prepare_segments(file_path=os.path.join(tps_df.iloc[idx]['imagedir'],tps_df.iloc[idx]['imagefile']), out_name=str(idx))
+    #for idx in range(len(tps_df)):
+    #    if (idx % 20) == 0:
+    #        print('i=',idx)
+    #    prepare_segments(file_path=os.path.join(tps_df.iloc[idx]['imagedir'],tps_df.iloc[idx]['imagefile']), out_name=str(idx))            
+    #    draw_image_with_keypoints(tps_df, idx)
+    #draw_image_with_keypoints(tps_df, 2)
+
+    head_df=pd.DataFrame(columns=['id','keypoints'])
+    neck_df=pd.DataFrame(columns=['id','keypoints'])
+    body_df=pd.DataFrame(columns=['id','keypoints'])
+    frontleg_df=pd.DataFrame(columns=['id','keypoints'])
+    rearleg_df=pd.DataFrame(columns=['id','keypoints'])
+
+    #idx = 10
     for idx in range(len(tps_df)):
+        
         if (idx % 20) == 0:
             print('i=',idx)
-        draw_image_with_keypoints(tps_df, idx)
-    #draw_image_with_keypoints(tps_df, 30)
+
+        boxes, classes, height = prepare_segments(file_path=os.path.join(tps_df.iloc[idx]['imagedir'],tps_df.iloc[idx]['imagefile']), 
+                                                    out_name=str(idx))
+        all_kps = tps_df.iloc[idx]['landmarks'] 
+
+        try:
+            all_ekps = utils.get_all_segments_keypoints(all_kps, boxes, classes, height, idx, draw=False)   
+        except:
+            print('idx=', idx, 'len=', len(all_kps))    
+
+        for key in all_ekps:
+            match key:
+                case 'Head':
+                    head_df = head_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True) 
+                case 'Neck':
+                    neck_df = neck_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)       
+                case 'Body':
+                    body_df = body_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)   
+                case 'Front leg':
+                    frontleg_df = frontleg_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)         
+                case 'Rear leg':
+                    rearleg_df = rearleg_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)        
+                case _:
+                    pass
+
+    print('head:', head_df.count())               
+    print('neck:', neck_df.count())        
+    print('body:', body_df.count())         
+    print('front leg:', frontleg_df.count())
+    print('rear leg:', rearleg_df.count()) 
+
+    print('head:', head_df.head(10))               
+    print('neck:', neck_df.head(10))        
+    print('body:', body_df.head(10))         
+    print('front leg:', frontleg_df.head(10))
+    print('rear leg:', rearleg_df.head(10))  
+
+    head_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'head_df.json'), orient='table')  
+    neck_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'neck_df.json'), orient='table')  
+    body_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'body_df.json'), orient='table')  
+    frontleg_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'frontleg_df.json'), orient='table')          
+    rearleg_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'rearleg_df.json'), orient='table')          
