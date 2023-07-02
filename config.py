@@ -37,7 +37,7 @@ REARLEG_KEYPOINTS =[
 # learning parameters
 BATCH_SIZE = 32
 LR = 0.001
-EPOCHS = 30
+EPOCHS = 100
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # train/test split

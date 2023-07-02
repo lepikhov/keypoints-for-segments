@@ -1,18 +1,26 @@
-import torch
-import torch.optim as optim
-import matplotlib.pyplot as plt
-import torch.nn as nn
-import matplotlib
+import argparse
+
 import config
+import matplotlib
+import matplotlib.pyplot as plt
+import torch
+import torch.nn as nn
+import torch.optim as optim
 import utils
-from model import HorseKeypointResNet50
 from dataset import prepare_samples
+from model import HorseKeypointResNet50
 from tqdm import tqdm
+
 matplotlib.style.use('ggplot')
 
 
+# construct the argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--segment', help='must be in (head, neck, body, front leg, rear leg)')
+args = vars(parser.parse_args())
+
 # segment
-segment = "rear leg"
+segment = args['segment']
 
 match segment:
     case 'head': keypoints_number = len(config.HEAD_KEYPOINTS)

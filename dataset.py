@@ -1,23 +1,29 @@
 import os
-import torch
-import cv2
-import pandas as pd
-import numpy as np
-import config
-import utils
 
-from torch.utils.data import Dataset, DataLoader
+import config
+import cv2
+import numpy as np
+import pandas as pd
+import torch
+import utils
+from sklearn import model_selection
+from torch.utils.data import DataLoader, Dataset
+
 
 def train_test_split(json_path, split):
     #df_data = pd.read_csv(csv_path)
     df_data = pd.read_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,json_path), orient='table')
-    len_data = len(df_data)
+    #len_data = len(df_data)
     # calculate the validation data sample length
-    valid_split = int(len_data * split)
+    #valid_split = int(len_data * split)
     # calculate the training data samples length
-    train_split = int(len_data - valid_split)
-    training_samples = df_data.iloc[:train_split][:]
-    valid_samples = df_data.iloc[-valid_split:][:]
+    #train_split = int(len_data - valid_split)
+    #training_samples = df_data.iloc[:train_split][:]
+    #valid_samples = df_data.iloc[-valid_split:][:]
+
+    training_samples, valid_samples = model_selection.train_test_split(df_data, shuffle = True, 
+                                     random_state = 8, 
+                                     test_size=split)
     return training_samples, valid_samples
 
 class HorseKeypointDataset(Dataset):
@@ -76,5 +82,12 @@ def prepare_samples(segment):
     print(f"Validation sample instances: {len(valid_data)}")
 
     return train_data, valid_data, train_loader, valid_loader
+
+if __name__ == "__main__":
+    train_data, valid_data, train_loader, valid_loader = prepare_samples("rear leg") 
+
+
+
+
                                             
 
