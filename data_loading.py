@@ -1,43 +1,34 @@
-from __future__ import print_function, division
-import os
-import torch
-import pandas as pd
-from skimage import io, transform
-import numpy as np
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
+from __future__ import division, print_function
+
 import json
-
-import cv2
+import os
 import random
+import uuid
+# Ignore warnings
+import warnings
 
-from PIL import Image
-
-import config
 import albumentations as A
 import albumentations.augmentations.functional as F
-from albumentations.pytorch import ToTensorV2
+import config
+import cv2
+import imageio
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import sklearn.metrics
+import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.optim
-from torch.utils.data import Dataset, DataLoader
-
-from sklearn.model_selection import train_test_split
-import sklearn.metrics 
-from sklearn.utils import shuffle
-import uuid
-from PIL import Image
-import cv2
-import random
-import imageio
-from segmentation import prepare_segments
 import utils
+from albumentations.pytorch import ToTensorV2
+from PIL import Image
+from segmentation import prepare_segments
+from skimage import io, transform
+from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
+from torch.utils.data import DataLoader, Dataset
 
-
-
-# Ignore warnings
-import warnings
 warnings.filterwarnings("ignore")
 
 plt.ion()   # interactive mode
@@ -202,6 +193,7 @@ if __name__ == "__main__":
     body_df=pd.DataFrame(columns=['id','keypoints'])
     frontleg_df=pd.DataFrame(columns=['id','keypoints'])
     rearleg_df=pd.DataFrame(columns=['id','keypoints'])
+    horse_df=pd.DataFrame(columns=['id','keypoints'])    
 
     #idx = 10
     for idx in range(len(tps_df)):
@@ -229,7 +221,9 @@ if __name__ == "__main__":
                 case 'Front leg':
                     frontleg_df = frontleg_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)         
                 case 'Rear leg':
-                    rearleg_df = rearleg_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)        
+                    rearleg_df = rearleg_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)      
+                case 'Horse':
+                    horse_df = horse_df.append({'id': idx, 'keypoints': all_ekps[key]}, ignore_index=True)                        
                 case _:
                     pass
 
@@ -238,15 +232,18 @@ if __name__ == "__main__":
     print('body:', body_df.count())         
     print('front leg:', frontleg_df.count())
     print('rear leg:', rearleg_df.count()) 
+    print('horse:', horse_df.count())      
 
     print('head:', head_df.head(10))               
     print('neck:', neck_df.head(10))        
     print('body:', body_df.head(10))         
     print('front leg:', frontleg_df.head(10))
     print('rear leg:', rearleg_df.head(10))  
+    print('horse:', horse_df.head(10))      
 
     head_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'head_df.json'), orient='table')  
     neck_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'neck_df.json'), orient='table')  
     body_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'body_df.json'), orient='table')  
     frontleg_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'frontleg_df.json'), orient='table')          
-    rearleg_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'rearleg_df.json'), orient='table')          
+    rearleg_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'rearleg_df.json'), orient='table')       
+    horse_df.to_json(os.path.join(config.ROOT_OUTPUT_DIRECTORY,'horse_df.json'), orient='table')        

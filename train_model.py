@@ -16,7 +16,7 @@ matplotlib.style.use('ggplot')
 
 # construct the argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--segment', help='must be in (head, neck, body, front leg, rear leg)')
+parser.add_argument('-s', '--segment', help='must be in (head, neck, body, front leg, rear leg, horse)')
 args = vars(parser.parse_args())
 
 # segment
@@ -28,6 +28,7 @@ match segment:
     case 'body': keypoints_number = len(config.BODY_KEYPOINTS)
     case 'front leg': keypoints_number = len(config.FRONTLEG_KEYPOINTS)
     case 'rear leg': keypoints_number = len(config.REARLEG_KEYPOINTS)
+    case 'horse': keypoints_number = len(config.HORSE_KEYPOINTS)    
     case _:
         pass
 

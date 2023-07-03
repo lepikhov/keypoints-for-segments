@@ -1,13 +1,11 @@
-import torchvision.transforms as transforms
+import config
 import cv2
-import numpy as np
-import torch
-from PIL import ImageFont, ImageDraw, Image
 import matplotlib.pyplot as plt
 import numpy as np
-
-from config import RECTANGLES_ATTRIBUTES as horse_segments_names 
-import config
+import torch
+import torchvision.transforms as transforms
+from config import RECTANGLES_ATTRIBUTES as horse_segments_names
+from PIL import Image, ImageDraw, ImageFont
 
 # define the torchvision image transforms
 transform = transforms.Compose([
@@ -181,7 +179,9 @@ def get_all_segments_keypoints(all_kps, boxes, classes, height, idx, draw=False)
             case 'Front leg':
                 ski = config.FRONTLEG_KEYPOINTS            
             case 'Rear leg':
-                ski = config.REARLEG_KEYPOINTS          
+                ski = config.REARLEG_KEYPOINTS   
+            case 'Horse':
+                ski = config.HORSE_KEYPOINTS                          
             case _:
                 cl = False         
         if cl:
