@@ -215,6 +215,7 @@ def valid_keypoints_plot(image, outputs, orig_keypoints, epoch):
     orig_keypoint = orig_keypoints[0]
     img = np.array(img, dtype='float32')
     img = np.transpose(img, (1, 2, 0))
+    plt.figure()
     plt.imshow(img)
     
     h, _, _ = img.shape

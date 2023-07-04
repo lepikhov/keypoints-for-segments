@@ -112,15 +112,17 @@ if __name__ == "__main__":
         print(f"Train Loss: {train_epoch_loss:.4f}")
         print(f'Val Loss: {val_epoch_loss:.4f}')
 
-    # loss plots
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color='orange', label='train loss')
-    plt.plot(val_loss, color='red', label='validataion loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/loss.png")
-    plt.show()
+        if (epoch+1) % 10 == 0:
+            # loss plots
+            plt.figure(figsize=(10, 7))
+            plt.plot(train_loss, color='orange', label='train loss')
+            plt.plot(val_loss, color='red', label='validataion loss')
+            plt.xlabel('Epochs')
+            plt.ylabel('Loss')
+            plt.legend()
+            plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/loss.png")
+            plt.show()
+
     torch.save({
         'epoch': config.EPOCHS,
         'model_state_dict': model.state_dict(),
