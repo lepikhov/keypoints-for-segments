@@ -43,7 +43,7 @@ HORSE_KEYPOINTS = [
 # learning parameters
 BATCH_SIZE = 32
 LR = 0.001
-EPOCHS = 200
+EPOCHS = 500
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # train/test split

@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 import config
 import matplotlib
@@ -90,7 +91,7 @@ def validate(model, dataloader, data, epoch):
             # plot the predicted validation keypoints after every...
             # ... predefined number of epochs
             if (epoch+1) % 10 == 0 and i == 0:
-                utils.valid_keypoints_plot(image, outputs, keypoints, epoch)
+                utils.valid_keypoints_plot(image, segment, outputs, keypoints, epoch)
 
     valid_loss = valid_running_loss/counter
     return valid_loss
@@ -103,6 +104,7 @@ if __name__ == "__main__":
 
     train_loss = []
     val_loss = []
+    min_train_loss = sys.float_info.max
     for epoch in range(config.EPOCHS):
         print(f"Epoch {epoch+1} of {config.EPOCHS}")
         train_epoch_loss = fit(model, train_loader, train_data)
@@ -123,10 +125,15 @@ if __name__ == "__main__":
             plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/loss.png")
             plt.show()
 
-    torch.save({
-        'epoch': config.EPOCHS,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': criterion,
-    }, f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/model.pth")
+        if val_epoch_loss < min_train_loss:            
+
+            min_train_loss = val_epoch_loss
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': criterion,
+            }, f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/model.pth")
+
+
     print('DONE TRAINING')

@@ -1,0 +1,6 @@
+python train_model.py -s "head"
+python train_model.py -s "neck"
+python train_model.py -s "body"
+python train_model.py -s "front leg"
+python train_model.py -s "rear leg"
+python train_model.py -s "horse"

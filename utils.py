@@ -200,7 +200,7 @@ def get_all_segments_keypoints(all_kps, boxes, classes, height, idx, draw=False)
 
     return all_ekps       
 
-def valid_keypoints_plot(image, outputs, orig_keypoints, epoch):
+def valid_keypoints_plot(image, segment, outputs, orig_keypoints, epoch):
     """
     This function plots the regressed (predicted) keypoints and the actual 
     keypoints after each validation epoch for one image in the batch.
@@ -224,5 +224,5 @@ def valid_keypoints_plot(image, outputs, orig_keypoints, epoch):
     for p in range(output_keypoint.shape[0]):
         plt.plot(output_keypoint[p, 0], h-output_keypoint[p, 1], 'r.')
         plt.plot(orig_keypoint[p, 0], h-orig_keypoint[p, 1], 'b.')
-    plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/val_epoch_{epoch}.png")
+    plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/val_epoch_{epoch}.png")
     plt.close()     
