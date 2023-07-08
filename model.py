@@ -1,8 +1,9 @@
+import config
+import pretrainedmodels
 import torch.nn as nn
 import torch.nn.functional as F
-import pretrainedmodels
-import config
-
+from torchvision.models.detection import (KeypointRCNN_ResNet50_FPN_Weights,
+                                          keypointrcnn_resnet50_fpn)
 
 
 class HorseKeypointResNet50(nn.Module):
@@ -10,8 +11,10 @@ class HorseKeypointResNet50(nn.Module):
         super(HorseKeypointResNet50, self).__init__()
         if pretrained == True:
             self.model = pretrainedmodels.__dict__['resnet50'](pretrained='imagenet')
+            #self.model = keypointrcnn_resnet50_fpn(weights=KeypointRCNN_ResNet50_FPN_Weights.DEFAULT)
         else:
             self.model = pretrainedmodels.__dict__['resnet50'](pretrained=None)
+            #self.model = keypointrcnn_resnet50_fpn(weights=None)
         if requires_grad == True:
             for param in self.model.parameters():
                 param.requires_grad = True
