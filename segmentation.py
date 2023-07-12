@@ -1,17 +1,19 @@
-import torchvision
-import torch
 import argparse
-import cv2
-import utils
-import numpy as np
-
-from PIL import Image
-
-from torchvision.models.detection import retinanet_resnet50_fpn_v2, RetinaNet_ResNet50_FPN_V2_Weights
-from torchvision.models.detection.retinanet import RetinaNetHead, RetinaNetClassificationHead
-import config
 import math
+
+import config
+import cv2
+import numpy as np
+import torch
+import torchvision
+import utils
+from PIL import Image
+from torchvision.models.detection import (RetinaNet_ResNet50_FPN_V2_Weights,
+                                          retinanet_resnet50_fpn_v2)
+from torchvision.models.detection.retinanet import (
+    RetinaNetClassificationHead, RetinaNetHead)
 from utils import get_max_score_segments
+
 
 def prepare_segments(file_path, out_name, threshold=0.5):
     # construct the argument parser
@@ -42,7 +44,7 @@ def prepare_segments(file_path, out_name, threshold=0.5):
     torch.nn.init.constant_(cls_logits.bias, -math.log((1 - 0.01) / 0.01))  # as per pytorcch code
     # assign cls head to model
     model.head.classification_head.cls_logits = cls_logits    
-    model.load_state_dict(torch.load('../segmentation/outputs/models/RetinaModel_100_Epochs_2023-05-21_18-26-29'))
+    model.load_state_dict(torch.load(f'{config.ROOT_SEGMENTATION_MODEL_DIRECTORY}/{config.SEGMENTATION_MODEL_PATH}'))
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # load the model onto the computation device

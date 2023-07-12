@@ -128,12 +128,13 @@ if __name__ == "__main__":
         if val_epoch_loss < min_train_loss:            
 
             min_train_loss = val_epoch_loss
+            
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': criterion,
             }, f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/model.pth")
-
-
+            
+            
     print('DONE TRAINING')
