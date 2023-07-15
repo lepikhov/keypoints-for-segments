@@ -224,5 +224,5 @@ def valid_keypoints_plot(image, segment, outputs, orig_keypoints, epoch):
     for p in range(output_keypoint.shape[0]):
         plt.plot(output_keypoint[p, 0], h-output_keypoint[p, 1], 'r.')
         plt.plot(orig_keypoint[p, 0], h-orig_keypoint[p, 1], 'b.')
-    plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/val_epoch_{epoch}.png")
+    plt.savefig(f"{config.ROOT_OUTPUT_DIRECTORY}/{segment}/val_epoch_{epoch}.png", bbox_inches='tight', pad_inches=0.1)
     plt.close()     

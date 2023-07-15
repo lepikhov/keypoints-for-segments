@@ -25,7 +25,7 @@ def train_test_split(json_path, split):
     #valid_samples = df_data.iloc[-valid_split:][:]
 
     training_samples, valid_samples = model_selection.train_test_split(df_data, shuffle=True,
-                                                                       random_state=8,
+                                                                       random_state=None,
                                                                        test_size=split)
     return training_samples, valid_samples
 
@@ -87,7 +87,7 @@ def prepare_samples(segment):
 
     # transform for augmentation
 
-    random.seed(7)
+    random.seed(42)
 
     transform = A.Compose([
         A.Rotate(limit=10, p=0.5),

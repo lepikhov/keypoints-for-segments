@@ -90,7 +90,7 @@ def validate(model, dataloader, data, epoch):
             valid_running_loss += loss.item()
             # plot the predicted validation keypoints after every...
             # ... predefined number of epochs
-            if (epoch+1) % 10 == 0 and i == 0:
+            if (epoch in [0, 2, 4, 6, 8]) or ((epoch+1) % 10 == 0):
                 utils.valid_keypoints_plot(image, segment, outputs, keypoints, epoch)
 
     valid_loss = valid_running_loss/counter

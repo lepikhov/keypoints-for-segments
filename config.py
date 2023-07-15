@@ -5,8 +5,8 @@ ROOT_OUTPUT_DIRECTORY ="/home/pavel/projects/horses/soft/python/morphometry/keyp
 
 ROOT_SEGMENTATION_MODEL_DIRECTORY = "../segmentation/outputs/models"
 
-#SEGMENTATION_MODEL_PATH = "RetinaModel_100_Epochs_2023-05-21_18-26-29"
-SEGMENTATION_MODEL_PATH = "RetinaModel_500_Epochs_2023-07-12_12-31-58"
+SEGMENTATION_MODEL_PATH = "RetinaModel_100_Epochs_2023-05-21_18-26-29"
+#SEGMENTATION_MODEL_PATH = "RetinaModel_500_Epochs_2023-07-12_12-31-58"
 
 SEGMENTS_NUMBER = 6
 
@@ -48,7 +48,7 @@ HORSE_KEYPOINTS = [
 # learning parameters
 BATCH_SIZE = 32
 LR = 0.001
-EPOCHS = 5
+EPOCHS = 200
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # train/test split
