@@ -41,6 +41,7 @@ optimizer = optim.Adam(model.parameters(), lr=config.LR)
 # we need a loss function which is good for regression like SmmothL1Loss ...
 # ... or MSELoss
 criterion = nn.SmoothL1Loss()
+#criterion = nn.MSELoss()
 
 # training function
 

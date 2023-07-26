@@ -5,8 +5,10 @@ ROOT_OUTPUT_DIRECTORY ="/home/pavel/projects/horses/soft/python/morphometry/keyp
 
 ROOT_SEGMENTATION_MODEL_DIRECTORY = "../segmentation/outputs/models"
 
-SEGMENTATION_MODEL_PATH = "RetinaModel_100_Epochs_2023-05-21_18-26-29"
+#SEGMENTATION_MODEL_PATH = "RetinaModel_100_Epochs_2023-05-21_18-26-29"
 #SEGMENTATION_MODEL_PATH = "RetinaModel_500_Epochs_2023-07-12_12-31-58"
+#SEGMENTATION_MODEL_PATH = "RetinaModel_200_Epochs_2023-07-25_05-57-39"
+SEGMENTATION_MODEL_PATH = "RetinaModel_200_Epochs_2023-07-26_05-23-58"
 
 SEGMENTS_NUMBER = 6
 
