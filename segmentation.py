@@ -16,21 +16,6 @@ from utils import get_max_score_segments
 
 
 def prepare_segments(file_path, out_name, threshold=0.5):
-    # construct the argument parser
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument('-i', '--input', help='path to input image/video')
-    #parser.add_argument('-m', '--min-size', dest='min_size', default=800, 
-    #                    help='minimum input size for the RetinaNet network')
-    #parser.add_argument('-t', '--threshold', default=0.5, type=float,
-    #                    help='minimum confidence score for detection')
-    #args = vars(parser.parse_args())
-    #print('USING:')
-    #print(f"Minimum image size: {args['min_size']}")
-    #print(f"Confidence threshold: {args['threshold']}")
-
-    # download or load the model from disk
-    #model = torchvision.models.detection.retinanet_resnet50_fpn(pretrained=True, 
-    #                                                            min_size=args['min_size'])
     model = retinanet_resnet50_fpn_v2(weights=None, box_score_thresh=0.7)    
     num_classes = config.SEGMENTS_NUMBER    
     # replace classification layer
@@ -55,15 +40,18 @@ def prepare_segments(file_path, out_name, threshold=0.5):
     image_array = np.array(image)
     # convert to OpenCV BGR color format
     image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
-    h,_,_ = image_array.shape
+    h,w,_ = image_array.shape
+
+    img = image.copy()
+    img=img.resize((256,256))
     # get the bounding boxes and class labels
-    boxes, classes, scores = utils.predict_horse_segments(image, model, device, threshold)
+    boxes, classes, scores = utils.predict_horse_segments(img, model, device, threshold)
     #print(boxes, classes, scores)
     b, c, s = get_max_score_segments(boxes, classes, scores)
-    #print(b, c, s)
+    b = utils.resize_boxes(b, from_size=(256,256), to_size=(w,h))
+
 
     # get the final image
-    #result = detect_utils.draw_horse_boxes(b, c, image_array)
     results = utils.copy_horse_boxes(b, c, s, image_array)
     for i in range(len(results)):
         img = results[i]
@@ -72,7 +60,3 @@ def prepare_segments(file_path, out_name, threshold=0.5):
 
     return b, c, h        
 
-    #cv2.imshow('Image', result)
-    #cv2.waitKey(0)
-    #save_name = f"{args['input'].split('/')[-1].split('.')[0]}_{args['min_size']}_t{int(args['threshold']*100)}"
-    #cv2.imwrite(f"outputs/{save_name}.jpg", result)

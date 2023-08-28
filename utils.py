@@ -32,6 +32,27 @@ def max_value_with_index(a, b):
     return max_value, max_index
 
 
+def resize_boxes(boxes, from_size, to_size):
+  
+    from_w = from_size[0]
+    from_h = from_size[1]
+    to_w = to_size[0]
+    to_h = to_size[1]
+
+    resized_boxes = []
+
+    for box in boxes:
+
+        new_x1 = box[0]*to_w/from_w
+        new_y1 = box[1]*to_h/from_h
+        new_x2 = box[2]*to_w/from_w
+        new_y2 = box[3]*to_h/from_h
+
+        resized_box = np.array([new_x1, new_y1, new_x2, new_y2], dtype=np.int32)
+        resized_boxes.append(resized_box)
+
+    return resized_boxes  
+
 def predict_horse_segments(image, model, device, detection_threshold):
     # transform the image to tensor
     image = transform(image).to(device)
